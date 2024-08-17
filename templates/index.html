@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Display with Barcodes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header a {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .header a:hover {
+            background-color: #45a049;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 20px;
+            width: calc(33.333% - 40px); /* 3 cards per row with space */
+            box-sizing: border-box;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .card table, .card th, .card td {
+            border: none;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .card th {
+            width: 40%;
+            color: #555;
+            font-weight: normal;
+        }
+
+        .card td {
+            width: 60%;
+        }
+
+        .card .barcode {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .card .barcode svg {
+            display: block;
+            margin-left: 40px;
+        }
+
+        .edit-btn {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .edit-btn a {
+            background-color: #007BFF;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn a:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 1024px) {
+            .card {
+                width: calc(50% - 40px); /* 2 cards per row on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: calc(100% - 40px); /* 1 card per row on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <a href="/printt">Go to Print Page</a>
+            <a href="/add_user">Add New User</a>
+        </div>
+    </div>
+
+    <div class="card-container">
+        {% for table_name, df in data.items() %}
+        {% for row in df.itertuples(index=False) %}
+        <div class="card">
+            <h3>حسينية السيدة فاطمة المعصومة</h3>
+            <table>
+                {% for i in range(df.columns|length) %}
+                <tr>
+                    <th>{{ df.columns[i] }}</th>
+                    <td>{{ row[i] }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2">
+                        <input type="hidden" value="hfm{{ row.userID }}" class="barcode-value">
+                        <div class="barcode">
+                            <svg class="barcode"></svg>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="edit-btn">
+                <a href="/edit_user/{{ row.userID }}">Edit User</a>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    <script>
+        const barcodeInputs = document.querySelectorAll('.barcode-value');
+        const barcodeSvgs = document.querySelectorAll('.barcode svg');
+
+        barcodeInputs.forEach((input, index) => {
+            JsBarcode(barcodeSvgs[index], input.value, {
+                format: "CODE128",
+                width: 2,
+                height: 50,
+                displayValue: true
+            });
+        });
+    </script>
+</body>
+</html>

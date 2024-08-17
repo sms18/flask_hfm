@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #003d80;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #0056b3;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .image-preview {
+            display: none;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .image-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .delete-button {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>اضافة مستلم</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="name">الاسم:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="laqap">اللقب:</label>
+            <input type="text" id="laqap" name="laqap" required>
+
+            <label for="nofAosra">عدد افراد الاسرة:</label>
+            <input type="number" id="nofAosra" name="nofAosra" required>
+
+            <label for="inoan">العنوان:</label>
+            <input type="text" id="inoan" name="inoan" required>
+            
+            <label for="phone">رقم الهاتف:</label>
+            <input type="text" id="phone" name="phone" required>
+
+            <label for="image">صورة المستخدم:</label>
+            <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(event)">
+
+            <div class="image-preview" id="imagePreview">
+                <img id="imagePreviewImg" src="" alt="Image Preview">
+                <button type="button" class="delete-button" onclick="deleteImage()">×</button>
+            </div>
+
+            <input type="submit" value="اضافة">
+        </form>
+        <a class="back-link" href="{{ url_for('display_data') }}">العودة للخلف</a>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            var imagePreview = document.getElementById('imagePreview');
+            var imagePreviewImg = document.getElementById('imagePreviewImg');
+            
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function() {
+                imagePreviewImg.src = reader.result;
+                imagePreview.style.display = 'block';
+            }
+            
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function deleteImage() {
+            var imageInput = document.getElementById('image');
+            var imagePreview = document.getElementById('imagePreview');
+            var imagePreviewImg = document.getElementById('imagePreviewImg');
+            
+            imageInput.value = '';  // Clear the file input
+            imagePreviewImg.src = '';  // Clear the image source
+            imagePreview.style.display = 'none';  // Hide the preview
+        }
+    </script>
+</body>
+</html>

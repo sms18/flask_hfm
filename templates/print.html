@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Display with Barcodes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            page-break-inside: avoid; /* Prevents page break inside container */
+        }
+
+        .card {
+            background-color: rgb(216, 241, 224);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 15px;
+            padding: 20px;
+            width: 280px; /* Fixed width to fit multiple cards on A4 */
+            height: 300px; /* Fixed height */
+            box-sizing: border-box;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            page-break-inside: avoid; /* Prevents page break inside card */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .card table, .card th, .card td {
+            border: none;
+            padding: 5px;
+            text-align: left;
+            font-size: 10px;
+        }
+
+        .card .barcode {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .card .barcode svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .card-container {
+                justify-content: flex-start;
+            }
+
+            .card {
+                margin: 10px; /* Reduced margin for printing */
+                width: 180px; /* Fixed width */
+                height: 250px; /* Fixed height */
+                box-shadow: none; /* No shadow for printing */
+                transform: none; /* No transform effect */
+                page-break-inside: avoid; /* Prevent page break inside card */
+                background-color: rgb(121, 250, 160) !important; /* Ensure background color is printed */
+                color-adjust: exact; /* Ensures that colors are printed exactly as specified */
+            }
+
+            .card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .card h3 {
+                font-size: 14px; /* Maintain font size for headers */
+            }
+
+            .card table, .card th, .card td {
+                font-size: 10px; /* Smaller font size for print readability */
+            }
+
+            .card .barcode svg {
+                width: 120px; /* Adjust barcode size for printing */
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/">Go to home Page</a>
+
+    <div class="card-container">
+        {% for table_name, df in data.items() %}
+        {% for row in df.itertuples(index=False) %}
+        <div class="card">
+            <h3>حسينية السيدة فاطمة المعصومة</h3>
+            <table>
+                {% for i in range(df.columns|length) %}
+                <tr>
+                    <th>{{ df.columns[i] }}</th>
+                    <td>{{ row[i] }}</td>
+                </tr>
+                {% endfor %}
+                
+                <tr>
+                    <td colspan="2">
+                        <input type="hidden" value="hfm{{ row.userID }}" class="barcode-value">
+                        <div class="barcode">
+                            <svg class="barcode"></svg>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    <script>
+        // Select all hidden input elements containing barcode values
+        const barcodeInputs = document.querySelectorAll('.barcode-value');
+        const barcodeSvgs = document.querySelectorAll('.barcode svg');
+
+        // Iterate through each input element to generate the barcode
+        barcodeInputs.forEach((input, index) => {
+            JsBarcode(barcodeSvgs[index], input.value, {
+                format: "CODE128",
+                width: 2,
+                height: 40,
+                displayValue: true
+            });
+        });
+    </script>
+</body>
+</html>
